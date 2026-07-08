@@ -4,10 +4,284 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  scroll-behavior: smooth;
+}
+
+@keyframes cinematicFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ping {
+  75%, 100% { transform: scale(2.5); opacity: 0; }
+}
+
 @layer base {
   body {
-    background-color: #021024;
+    background-color: #050505 !important;
+    background-image: none !important;
     color: #F8FAFC;
     font-family: 'Inter', sans-serif;
+  }
+}
+
+/* Базовый оттенок для всех карточек и эффект при наведении */
+div[class*="border-white/"], 
+div[class*="border-zinc-"] {
+  background-color: #09090b !important; /* Глубокий угольный цвет Apple-style */
+  transition: all 0.4s ease-in-out !important;
+}
+
+div[class*="border-white/"]:hover, 
+div[class*="border-zinc-"]:hover {
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  background-color: #121214 !important; /* Чуть светлее при наведении */
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.03);
+  transform: translateY(-2px);
+}
+
+/* Стили для секции «Как мы работаем» (Таймлайн) */
+.timeline-section {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  padding: 120px 24px !important;
+}
+
+.timeline-container {
+  max-width: 900px !important;
+  margin: 0 auto !important;
+}
+
+.timeline-header-center {
+  text-align: center !important;
+  margin-bottom: 80px !important;
+}
+
+.timeline-header-line-center {
+  width: 64px !important;
+  height: 2px !important;
+  background: linear-gradient(90deg, rgba(255,255,255,0), #ffffff, rgba(255,255,255,0)) !important;
+  margin: 20px auto 0 !important;
+}
+
+.timeline-header-center h2 {
+  font-size: 36px !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.03em !important;
+  text-transform: uppercase !important;
+  margin: 0 !important;
+}
+
+.timeline-stream-center {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 64px !important;
+  padding: 20px 0 !important;
+}
+
+/* Центральная линия */
+.timeline-stream-center::before {
+  content: '' !important;
+  position: absolute !important;
+  left: 50% !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  width: 2px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  margin-left: -1px !important;
+}
+
+.timeline-item-center {
+  position: relative !important;
+  display: flex !important;
+  width: 100% !important;
+  justify-content: space-between !important;
+}
+
+.item-left { flex-direction: row-reverse !important; }
+.item-right { flex-direction: row !important; }
+
+.timeline-badge-center {
+  position: absolute !important;
+  left: 50% !important;
+  top: 0 !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  background-color: #09090b !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  font-family: monospace !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 15px rgba(255,255,255,0.05) !important;
+  margin-left: -16px !important;
+  z-index: 2 !important;
+}
+
+.timeline-content-center {
+  width: 45% !important;
+}
+
+.item-left .timeline-content-center { text-align: right !important; }
+.item-right .timeline-content-center { text-align: left !important; }
+
+.timeline-step {
+  font-size: 11px !important;
+  font-family: monospace !important;
+  color: #a1a1aa !important;
+  letter-spacing: 0.15em !important;
+  text-transform: uppercase !important;
+  display: block !important;
+  margin-bottom: 6px !important;
+}
+
+.timeline-title {
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  margin-top: 0 !important;
+  margin-bottom: 12px !important;
+  color: #ffffff !important;
+}
+
+.timeline-text {
+  color: #71717a !important;
+  font-size: 15px !important;
+  line-height: 1.7 !important;
+  margin: 0 !important;
+}
+
+/* Начальное состояние элементов для анимации */
+.timeline-item-center {
+  opacity: 0 !important;
+  transform: translateY(40px) !important;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* Класс, который будет активировать появление */
+.timeline-item-center.is-visible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+/* Плавный пульсирующий свет от центральной линии */
+@media (min-width: 768px) {
+  .timeline-stream-center::before {
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0) 100%
+    ) !important;
+  }
+}
+
+/* 📱 Мобильная адаптация */
+@media (max-width: 768px) {
+  
+  /* 1. Исправляем шапку (Header) */
+  nav {
+    justify-content: space-between !important;
+    padding: 0 16px !important;
+  }
+  
+  /* Скрываем текстовые ссылки меню на мобилке, чтобы не было каши */
+  nav a:not([href="#contacts"]), 
+  nav div button:not([id]) { 
+    display: none !important; 
+  }
+  
+  /* Делаем кнопку «Связаться» чуть компактнее */
+  nav a[href="#contacts"] {
+    padding: 8px 16px !important;
+    font-size: 13px !important;
+  }
+
+  /* 2. Исправляем блок «Как мы работаем» (Таймлайн) */
+  /* Сдвигаем вертикальную линию в самый левый край */
+  .timeline-stream-center::before {
+    left: 20px !important;
+    transform: none !important;
+  }
+
+  /* Разворачиваем все элементы таймлайна в одну сторону (вправо от линии) */
+  .timeline-item-center {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 56px !important; /* Отступ справа от линии */
+    padding-right: 16px !important;
+    text-align: left !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    flex-direction: row !important;
+  }
+
+  /* Смещаем кружки с номерами на саму линию влево */
+  .timeline-badge-center {
+    left: 20px !important;
+    transform: translateX(-50%) !important;
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 12px !important;
+    margin-left: 0 !important;
+  }
+
+  /* Корректируем заголовки блоков на мобильных */
+  h2 {
+    font-size: 28px !important;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  /* Фиксируем положение центральной линии у левого края */
+  .timeline-stream-center::before {
+    left: 20px !important;
+    transform: none !important;
+    margin: 0 !important;
+  }
+
+  /* Настраиваем контейнер каждого шага */
+  .timeline-item-center {
+    width: 100% !important;
+    max-width: 100% !important;
+    /* Создаем безопасный отступ слева, чтобы текст гарантированно не наезжал на кружки */
+    padding-left: 56px !important; 
+    padding-right: 16px !important;
+    text-align: left !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Принудительно выравниваем заголовки и текст внутри карточек по левому краю */
+  .timeline-item-center h3,
+  .timeline-item-center p,
+  .timeline-item-center span,
+  .timeline-content-center {
+    text-align: left !important;
+    align-items: flex-start !important;
+  }
+
+  /* Идеально центрируем кружки с цифрами строго на линии */
+  .timeline-badge-center {
+    left: 20px !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    margin: 0 !important;
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 13px !important;
   }
 }

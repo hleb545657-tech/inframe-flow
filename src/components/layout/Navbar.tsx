@@ -1,88 +1,119 @@
-import React, { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Logo } from '../common/Logo'
-import { Container } from '../layout/Section'
-import { FiMenu, FiX } from 'react-icons/fi'
+import React from 'react'
 
-const menuItems = ['Home', 'Portfolio', 'Services', 'Cases', 'About', 'Contact']
+interface NavbarProps {
+  lang: 'RU' | 'EN'
+  setLang: (lang: 'RU' | 'EN') => void
+}
 
-export const Navbar: React.FC = () => {
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50)
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
+export const Navbar: React.FC<NavbarProps> = ({ lang, setLang }) => {
   return (
-    <motion.nav
-      className={`fixed top-0 w-full z-40 transition-all duration-300 ${
-        isScrolled
-          ? 'bg-background/80 backdrop-blur-md py-4'
-          : 'bg-transparent py-6'
-      }`}
-    >
-      <Container className="flex justify-between items-center">
-        <Logo className="h-8" />
+    <nav style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: '24px 40px',
+      zIndex: 100,
+      background: 'linear-gradient(to bottom, rgba(5, 5, 5, 0.95) 0%, rgba(5, 5, 5, 0.6) 60%, transparent 100%)',
+      opacity: 0,
+      animation: 'cinematicFadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+      animationDelay: '1000ms'
+    }}>
+      <style>{`
+        @keyframes cinematicFadeIn {
+          from { opacity: 0; transform: translateY(15px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+      {/* ЛОГОТИП */}
+      <div 
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className="cursor-pointer hover:opacity-80 transition-opacity"
+        style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        gap: '10px',
+        userSelect: 'none'
+      }}>
+        <span style={{
+          width: '8px',
+          height: '8px',
+          backgroundColor: '#ffffff',
+          borderRadius: '50%',
+          display: 'inline-block',
+          boxShadow: '0 0 10px #ffffff'
+        }} />
+        
+        <span style={{ 
+          fontSize: '18px', 
+          fontWeight: 800, 
+          letterSpacing: '1px',
+          fontFamily: 'system-ui, -apple-system, sans-serif'
+        }}>
+          <span style={{ color: '#ffffff' }}>InFrame</span>
+          <span style={{ color: '#A3A3A3', fontWeight: 400, marginLeft: '2px' }}>Flow</span>
+        </span>
+      </div>
 
-        {/* Desktop Menu */}
-        <div className="hidden md:flex gap-8 text-white font-medium">
-          {menuItems.map((item) => (
-            <a
-              key={item}
-              href={`#${item.toLowerCase()}`}
-              className="hover:text-accent transition-colors"
+      {/* НАВИГАЦИЯ И ЯЗЫКИ */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+        {/* Кнопки навигации */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+          <a 
+            href="#portfolio" 
+            style={{ fontSize: '14px', fontWeight: 500, color: '#A3A3A3', textDecoration: 'none', transition: 'color 0.2s' }}
+            onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'}
+            onMouseLeave={(e) => e.currentTarget.style.color = '#A3A3A3'}
+          >
+            {lang === 'RU' ? 'Работы' : 'Works'}
+          </a>
+          <a 
+            href="#contacts" 
+            style={{ 
+              backgroundColor: '#ffffff', color: '#050505', fontSize: '14px', fontWeight: 600, 
+              padding: '8px 20px', borderRadius: '20px', textDecoration: 'none', 
+              boxShadow: '0 0 15px rgba(255, 255, 255, 0.1)', transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.9)'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
+          >
+            {lang === 'RU' ? 'Связаться' : 'Contact'}
+          </a>
+        </div>
+
+        {/* ПЕРЕКЛЮЧАТЕЛЬ ЯЗЫКОВ */}
+        <div style={{ 
+          display: 'flex', 
+          gap: '4px', 
+          backgroundColor: 'rgba(255, 255, 255, 0.05)', 
+          padding: '3px', 
+          borderRadius: '10px',
+          border: '1px solid rgba(255, 255, 255, 0.1)'
+        }}>
+          {(['RU', 'EN'] as const).map((l) => (
+            <button
+              key={l}
+              onClick={() => setLang(l)}
+              style={{
+                backgroundColor: lang === l ? '#404040' : 'transparent',
+                color: lang === l ? '#ffffff' : '#A3A3A3',
+                border: 'none',
+                padding: '6px 12px',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: 600,
+                transition: 'all 0.2s ease'
+              }}
             >
-              {item}
-            </a>
+              {l}
+            </button>
           ))}
         </div>
-
-        <div className="hidden md:flex items-center gap-4 text-sm font-medium">
-          <button className="text-accent">RU</button>
-          <span className="text-secondary">|</span>
-          <button className="hover:text-accent">EN</button>
-        </div>
-
-        {/* Mobile Toggle */}
-        <button
-          className="md:hidden text-white text-2xl"
-          onClick={() => setIsMobileMenuOpen(true)}
-        >
-          <FiMenu />
-        </button>
-      </Container>
-
-      {/* Fullscreen Mobile Menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: '-100%' }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: '-100%' }}
-            className="fixed inset-0 bg-background z-50 flex flex-col items-center justify-center gap-8"
-          >
-            <button
-              className="absolute top-6 right-6 text-white text-3xl"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <FiX />
-            </button>
-            {menuItems.map((item) => (
-              <a
-                key={item}
-                href={`#${item.toLowerCase()}`}
-                className="text-3xl font-display text-white"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {item}
-              </a>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.nav>
+      </div>
+    </nav>
   )
 }
